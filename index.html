@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AssetOps AI | Unified Operations Brain</title>
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="app-container">
+      <aside class="sidebar">
+        <div class="brand">
+          <div class="logo-icon">⚙️</div>
+          <div class="brand-text">
+            <h2>AssetOps AI</h2>
+            <span>Unified Operations Brain</span>
+          </div>
+        </div>
+
+        <div class="system-status">
+          <div class="status-indicator online"></div>
+          <span>Core Systems Online</span>
+        </div>
+
+        <div class="sidebar-section">
+          <h3>KNOWLEDGE BASE</h3>
+          <p class="help-text">
+            Upload industrial manuals, safety protocols, or equipment specs to
+            expand the AI's knowledge.
+          </p>
+
+          <input
+            type="file"
+            id="file-upload"
+            accept="application/pdf"
+            style="display: none"
+          />
+          <button class="btn-upload-primary" id="btn-upload">
+            <svg
+              width="20"
+              height="20"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"
+              ></path>
+            </svg>
+            Upload PDF Manual
+          </button>
+        </div>
+        <br>
+        <div class="sidebar-section">
+          <button class="btn-new-chat" onclick="startNewChat()">
+            + New Chat
+          </button>
+          <div id="chat-list"></div>
+        </div>
+      </aside>
+
+      <main class="chat-container">
+        <div id="chat-box">
+          <div class="welcome-screen" id="welcome-screen">
+            <h1>How can I help you today?</h1>
+            <p>
+              I am your Industrial Knowledge Copilot. Ask me about maintenance
+              schedules, error codes, or safety compliance.
+            </p>
+
+            <div class="suggestion-chips">
+              <button
+                class="chip"
+                onclick="
+                  fillQuery(
+                    'What is the maintenance schedule for the Vortex-9000?',
+                  )
+                "
+              >
+                Maintenance Schedule
+              </button>
+              <button
+                class="chip"
+                onclick="
+                  fillQuery('Explain error code ERR-V9-404 and its resolution.')
+                "
+              >
+                Troubleshoot Error Codes
+              </button>
+              <button
+                class="chip"
+                onclick="
+                  fillQuery(
+                    'Which safety standards does the equipment comply with?',
+                  )
+                "
+              >
+                Safety & Compliance
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="input-wrapper">
+          <div class="input-box">
+            <input
+              type="text"
+              id="user-input"
+              placeholder="Ask about an asset, or type an error code..."
+              autocomplete="off"
+            />
+            <button class="btn-send" id="btn-send" aria-label="Send">
+              <svg
+                width="20"
+                height="20"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
+                ></path>
+              </svg>
+            </button>
+          </div>
+          <div class="footer-text">
+            AssetOps AI uses Multimodal RAG. Verify critical actions with
+            physical manuals.
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <div id="toast-container"></div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
