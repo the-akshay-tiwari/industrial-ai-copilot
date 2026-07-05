@@ -63,7 +63,7 @@ export async function askAssetBrain(userQuery) {
 
     // Generate the final response with the retrieval context embedded in the prompt.
     console.log("🤖 Generating final answer with REAL Gemini AI...");
-    const textModel = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    const textModel = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
     const systemPrompt = `
             You are an Expert Industrial Knowledge Copilot.
