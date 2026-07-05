@@ -9,13 +9,10 @@ const fileInput = document.getElementById("file-upload");
 const btnUpload = document.getElementById("btn-upload");
 const welcomeScreen = document.getElementById("welcome-screen");
 
-// Check karo ki user ki ID pehle se hai ya nahi
-let sessionId = localStorage.getItem("ai_session_id");
-
-// Agar naya user hai, toh ek random unique ID bana do
+let sessionId = localStorage.getItem('ai_session_id');
 if (!sessionId) {
-  sessionId = "user-" + Math.random().toString(36).substring(2, 15);
-  localStorage.setItem("ai_session_id", sessionId);
+    sessionId = 'session_' + Math.random().toString(36).substring(2, 15);
+    localStorage.setItem('ai_session_id', sessionId);
 }
 
 // Register the primary UI event handlers.
@@ -199,7 +196,7 @@ async function loadExistingChat(chatId, btnElement) {
 
   try {
     // Fetch the message history for the selected conversation.
-    const response = await fetch(`/api/chats/${chatId}`);
+    const response = await fetch(`/api/chats/${sessionId}`);
     const history = await response.json();
 
     // Clear the placeholder and render the restored messages.
