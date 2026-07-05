@@ -16,6 +16,9 @@ const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 app.use(express.json());
 app.use(cors());
 
+// Front-end files (HTML, CSS, JS) ko serve karne ke liye
+app.use(express.static('public'));
+
 // In-memory chat storage keeps the demo lightweight while preserving conversation state during the server process.
 const chatHistory = {};
 const upload = multer({ storage: multer.memoryStorage() });
