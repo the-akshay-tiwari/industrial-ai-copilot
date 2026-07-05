@@ -9,6 +9,15 @@ const fileInput = document.getElementById("file-upload");
 const btnUpload = document.getElementById("btn-upload");
 const welcomeScreen = document.getElementById("welcome-screen");
 
+// Check karo ki user ki ID pehle se hai ya nahi
+let sessionId = localStorage.getItem("ai_session_id");
+
+// Agar naya user hai, toh ek random unique ID bana do
+if (!sessionId) {
+  sessionId = "user-" + Math.random().toString(36).substring(2, 15);
+  localStorage.setItem("ai_session_id", sessionId);
+}
+
 // Register the primary UI event handlers.
 btnSend.addEventListener("click", sendMessage);
 userInput.addEventListener("keypress", (e) => {
@@ -51,6 +60,7 @@ async function sendMessage() {
   // Prepare the payload sent to the query endpoint.
   const payload = { query: text };
   if (currentChatId) payload.chatId = currentChatId;
+  payload.sessionId = sessionId;
 
   try {
     const response = await fetch("/api/query", {

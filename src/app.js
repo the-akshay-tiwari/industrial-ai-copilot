@@ -17,37 +17,40 @@ app.use(express.json());
 app.use(cors());
 
 // Front-end files (HTML, CSS, JS) ko serve karne ke liye
-app.use(express.static('public'));
+app.use(express.static("public"));
 
-// In-memory chat storage keeps the demo lightweight while preserving conversation state during the server process.
+// Bada dabba jisme ab har user ka chat aur data unki unique ID se save hoga
 const chatHistory = {};
 const upload = multer({ storage: multer.memoryStorage() });
-
-// The API surface is organized around query handling, document ingestion, and chat history retrieval.
 
 // Handles user prompts and returns either a generated answer or a fallback response when the upstream API is unavailable.
 app.post("/api/query", async (req, res) => {
   try {
     const body = req.body || {};
-    const { query, chatId } = body;
+    // Frontend se 'query' aur 'sessionId' dono receive kar rahe hain
+    const { query, sessionId } = body;
 
     if (!query) return res.status(400).json({ error: "Missing query" });
 
-    const id = chatId || "chat_" + Date.now();
+    // Agar ID frontend se aayi hai toh wo use karo, warna ek temporary ID bana lo
+    const id = sessionId || "session_" + Date.now();
+
+    // Agar is user ka box pehle se nahi hai, toh ek naya empty box bana do
     if (!chatHistory[id]) chatHistory[id] = [];
 
     // The request is delegated to the RAG agent for retrieval and response synthesis.
     const answer = await askAssetBrain(query);
 
+    // Data sirf is specific user ke dabbe mein save ho raha hai
     chatHistory[id].push({ role: "user", content: query });
     chatHistory[id].push({ role: "assistant", content: answer });
 
-    res.json({ answer: answer, chatId: id });
+    res.json({ answer: answer, sessionId: id });
   } catch (error) {
     console.error("API Limit Hit - Serving Fallback Answer");
 
-    // The fallback response preserves a usable experience when cloud API rate limits are hit.
-    const id = (req.body && req.body.chatId) || "chat_" + Date.now();
+    // Fallback block mein bhi same isolation logic
+    const id = (req.body && req.body.sessionId) || "session_" + Date.now();
     const fallbackAnswer =
       "⚠️ **[Local Cache Mode Active]**\n\nBased on the offline Asset manual, to fix this issue you need to:\n1. Maintain torque values at exactly 145 Nm.\n2. Inspect the beryllium bearings for wear and tear.\n3. Restart the core centrifuge unit.\n\n*(Note: System switched to local retrieval due to temporary cloud API throttling.)*";
 
@@ -55,12 +58,10 @@ app.post("/api/query", async (req, res) => {
     const userQuery =
       req.body && req.body.query ? req.body.query : "Unknown Query";
 
-    // Persist the fallback response so the frontend can render it as part of the same conversation.
     chatHistory[id].push({ role: "user", content: userQuery });
     chatHistory[id].push({ role: "assistant", content: fallbackAnswer });
 
-    // Returning 200 keeps the UI behavior consistent with a normal assistant response.
-    res.status(200).json({ answer: fallbackAnswer, chatId: id });
+    res.status(200).json({ answer: fallbackAnswer, sessionId: id });
   }
 });
 
@@ -84,8 +85,6 @@ app.post("/api/upload", upload.single("document"), async (req, res) => {
       .substring(0, 2000)
       .replace(/\n/g, " ");
 
-    // The extracted text is intended for downstream vector and graph storage operations.
-
     res.json({
       success: true,
       message: `Successfully ingested '${req.file.originalname}'.`,
@@ -96,18 +95,18 @@ app.post("/api/upload", upload.single("document"), async (req, res) => {
   }
 });
 
-// Returns the identifiers of all conversations currently stored in memory.
+// Returns the identifiers of all active sessions
 app.get("/api/chats", (req, res) => {
   res.json(Object.keys(chatHistory));
 });
 
-// Returns the full message history for a specific chat session.
+// Returns the full message history for a specific session
 app.get("/api/chats/:id", (req, res) => {
   const history = chatHistory[req.params.id] || [];
   res.json(history);
 });
 
-// Start the HTTP server once the route definitions are in place.
-app.listen(PORT, () => {
-  console.log(`\n🚀 Server running on http://localhost:${PORT}`);
+// Cloud environments (Render) ke liye '0.0.0.0' bind zaroori hai
+app.listen(PORT, "0.0.0.0", () => {
+  console.log(`\n🚀 Enterprise AI Brain is live on port ${PORT}`);
 });
