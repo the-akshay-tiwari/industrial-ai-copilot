@@ -53,7 +53,7 @@ async function sendMessage() {
   if (currentChatId) payload.chatId = currentChatId;
 
   try {
-    const response = await fetch("http://localhost:3000/api/query", {
+    const response = await fetch("/api/query", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
@@ -148,7 +148,7 @@ function startNewChat() {
 // Load the chat history list from the server.
 async function loadChatList() {
   try {
-    const response = await fetch("http://localhost:3000/api/chats");
+    const response = await fetch("/api/chats");
     const chats = await response.json();
     const listDiv = document.getElementById("chat-list");
     listDiv.innerHTML = "";
@@ -189,7 +189,7 @@ async function loadExistingChat(chatId, btnElement) {
 
   try {
     // Fetch the message history for the selected conversation.
-    const response = await fetch(`http://localhost:3000/api/chats/${chatId}`);
+    const response = await fetch(`/api/chats/${chatId}`);
     const history = await response.json();
 
     // Clear the placeholder and render the restored messages.
@@ -247,7 +247,7 @@ async function handleFileUpload(event) {
   formData.append("document", file);
 
   try {
-    const response = await fetch("http://localhost:3000/api/upload", {
+    const response = await fetch("/api/upload", {
       method: "POST",
       body: formData,
     });
